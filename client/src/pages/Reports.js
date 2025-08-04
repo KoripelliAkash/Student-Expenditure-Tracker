@@ -88,58 +88,44 @@ function Reports() {
   const generateSummary = async () => {
   try {
     setError(null);
-    setSummary("Generating insights..."); // Loading state
+    setSummary("Generating insights with Gemma AI...");
 
-    // Validate transactions
-    if (transactions.length === 0) {
-      throw new Error("No transactions available for the selected period");
-    }
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) throw new Error("Please sign in");
 
-    // Get session
-    const { data: { session }, error: authError } = await supabase.auth.getSession();
-    if (authError || !session?.access_token) {
-      throw new Error("Please sign in to generate summaries");
-    }
-
-    // Prepare request
-    const requestData = {
+    // Prepare optimized payload
+    const payload = {
       transactions: transactions.map(t => ({
         amount: t.amount,
         category: t.category_name,
         date: t.date,
-        description: t.description.substring(0, 100) // Truncate long descriptions
+        description: t.description?.substring(0, 50) || ''
       })),
       month: new Date(selectedYear, selectedMonth - 1).toLocaleString('default', { month: 'long' }),
       year: selectedYear
     };
 
-    // Make API request
     const response = await fetch('http://localhost:5000/api/generate-insights', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${session.access_token}`
       },
-      body: JSON.stringify(requestData)
+      body: JSON.stringify(payload)
     });
 
-    // Handle response
     const data = await response.json();
 
     if (!response.ok) {
-      throw new Error(data.error || "Analysis failed");
+      throw new Error(data.error || data.fallback || "Analysis failed");
     }
 
-    if (!data.insights) {
-      throw new Error("Received empty analysis");
-    }
+    setSummary(data.insights || data.fallback);
 
-    setSummary(data.insights);
-    
   } catch (error) {
-    console.error("Summary generation failed:", error);
     setError(error.message);
-    setSummary(""); // Clear loading state
+    setSummary("");
+    console.error("Analysis Error:", error);
   }
 };
 

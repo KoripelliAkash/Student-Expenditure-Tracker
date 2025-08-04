@@ -130,6 +130,33 @@
   background: #45a049;
 }
 
+.ai-summary {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 20px;
+  margin-top: 20px;
+}
+
+.ai-summary h3 {
+  color: #2c3e50;
+  margin-top: 0;
+}
+
+.summary-content {
+  white-space: pre-line;
+  line-height: 1.6;
+}
+
+.error-message {
+  background: #ffebee;
+  color: #c62828;
+  padding: 10px 15px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
 @media (max-width: 768px) {
   .report-controls {
     flex-direction: column;
