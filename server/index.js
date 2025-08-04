@@ -92,26 +92,71 @@ app.post('/api/generate-report', authenticateJWT, async (req, res) => {
 // Get AI insights
 app.post('/api/generate-insights', authenticateJWT, async (req, res) => {
   try {
-    const { transactions, budget } = req.body;
-    const model = genAI.getGenerativeModel({ model: "gemini-pro" });
-    
-    let prompt;
-    if (budget) {
-      prompt = `Given a budget of $${budget} for a college student and past spending data: ${JSON.stringify(transactions)}, create an ideal monthly expense distribution (in %), recommended savings, and brief suggestions.`;
-    } else {
-      prompt = `Here's the student's transaction data: ${JSON.stringify(transactions)}. Generate a concise summary highlighting the main expense areas, any overspending, and suggestions for savings next month.`;
+    const { transactions, month, year } = req.body;
+
+    // Validate input
+    if (!transactions || !Array.isArray(transactions)) {
+      return res.status(400).json({ error: 'Invalid transactions data' });
     }
 
-    const result = await model.generateContent(prompt);
+    if (transactions.length === 0) {
+      return res.json({ insights: "No transactions available for analysis" });
+    }
+
+    // Initialize Gemini API
+    const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+
+    // Create structured prompt
+    const prompt = `Analyze this student's spending for ${month} ${year}:
+    
+    Transaction Data:
+    ${JSON.stringify(transactions.slice(0, 20), null, 2)} 
+    ${transactions.length > 20 ? `\n(Showing 20 of ${transactions.length} transactions)` : ''}
+
+    Provide a concise summary (150-200 words) with:
+    1. Top 3 spending categories
+    2. Weekly spending patterns
+    3. Potential savings opportunities
+    4. One specific recommendation`;
+
+    console.log("Sending to Gemini:", prompt); // Debug log
+
+    // Generate content with error handling
+    const result = await model.generateContent(prompt).catch(err => {
+      console.error("Gemini API error:", err);
+      throw new Error("AI service unavailable");
+    });
+
     const response = await result.response;
     const text = response.text();
-    
-    res.json({ insights: text });
+
+    if (!text) {
+      throw new Error("Empty response from AI");
+    }
+
+    res.json({ 
+      insights: text,
+      meta: {
+        transactionCount: transactions.length,
+        period: `${month} ${year}`
+      }
+    });
+
   } catch (error) {
-    console.error('Error generating insights:', error);
-    res.status(500).json({ error: 'Failed to generate insights' });
+    console.error("Error in generate-insights:", error);
+    res.status(500).json({ 
+      error: error.message || "Analysis failed",
+      details: process.env.NODE_ENV === 'development' ? error.stack : undefined
+    });
   }
 });
+
+const cors = require('cors');
+app.use(cors({
+  origin: 'http://localhost:3000',
+  methods: ['POST', 'GET'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);

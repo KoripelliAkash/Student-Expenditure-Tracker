@@ -4,6 +4,22 @@
   padding: 20px;
 }
 
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  font-size: 1.2rem;
+}
+
+.error-message {
+  color: #f44336;
+  margin-bottom: 15px;
+  padding: 10px;
+  background: #ffeeee;
+  border-radius: 4px;
+}
+
 .report-controls {
   display: flex;
   justify-content: space-between;
@@ -52,12 +68,52 @@
   color: #333;
 }
 
-.summary-section p {
-  white-space: pre-line;
+.weekly-transactions {
+  margin-top: 20px;
+}
+
+.week-section {
+  margin-bottom: 30px;
+  background: white;
+  border-radius: 8px;
+  padding: 15px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.week-section h3 {
+  margin-top: 0;
+  color: #2c3e50;
+}
+
+.transactions-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.transactions-table th,
+.transactions-table td {
+  padding: 10px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+.transactions-table th {
+  background-color: #f2f2f2;
+}
+
+.week-total {
+  font-weight: bold;
+  background-color: #f8f9fa;
+}
+
+.week-total td {
+  padding: 10px;
 }
 
 .report-actions {
   text-align: center;
+  margin-top: 30px;
 }
 
 .download-btn {
@@ -74,7 +130,21 @@
   background: #45a049;
 }
 
-.download-btn:disabled {
-  background: #cccccc;
-  cursor: not-allowed;
+@media (max-width: 768px) {
+  .report-controls {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .date-selectors {
+    width: 100%;
+  }
+  
+  .date-selectors select {
+    width: 100%;
+  }
+  
+  .generate-btn {
+    width: 100%;
+  }
 }

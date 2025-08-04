@@ -62,28 +62,28 @@ const styles = StyleSheet.create({
 const MyDocument = ({ transactions, month, year, summary }) => {
   const monthName = new Date(year, month - 1).toLocaleString('default', { month: 'long' });
   const total = transactions.reduce((sum, t) => sum + t.amount, 0);
-  
+
   // Group by category for the pie chart (simplified for PDF)
   const categoryData = {};
   transactions.forEach(t => {
     const category = t.categories.category_name;
     categoryData[category] = (categoryData[category] || 0) + t.amount;
   });
-  
+
   return (
     <Document>
       <Page style={styles.page}>
         <View style={styles.header}>
           <Text style={styles.title}>Expense Report - {monthName} {year}</Text>
         </View>
-        
+
         {summary && (
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>AI-Generated Summary</Text>
             <Text>{summary}</Text>
           </View>
         )}
-        
+
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Expense Breakdown</Text>
           <View style={styles.table}>
@@ -93,20 +93,20 @@ const MyDocument = ({ transactions, month, year, summary }) => {
               <Text style={styles.tableColDesc}>Description</Text>
               <Text style={styles.tableColAmount}>Amount</Text>
             </View>
-            
+
             {transactions.map((t, i) => (
               <View key={i} style={styles.tableRow}>
                 <Text style={styles.tableColDate}>{new Date(t.date).toLocaleDateString()}</Text>
-                <Text style={styles.tableColCategory}>{t.categories.category_name}</Text>
+                <Text style={styles.tableColCategory}>{t.category_name}</Text>
                 <Text style={styles.tableColDesc}>{t.description || '-'}</Text>
                 <Text style={styles.tableColAmount}>${t.amount.toFixed(2)}</Text>
               </View>
             ))}
           </View>
-          
+
           <Text style={styles.total}>Total Expenses: ${total.toFixed(2)}</Text>
         </View>
-        
+
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Expense by Category</Text>
           {Object.entries(categoryData).map(([category, amount]) => (

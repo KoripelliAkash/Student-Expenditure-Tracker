@@ -88,19 +88,22 @@ function Dashboard() {
     }));
     setCategoryData(categoryChartData);
 
-    // Prepare weekly data for line chart
+    // Prepare weekly data for line chart (maximum 5 weeks)
     const weeklyMap = {};
     const weeksInMonth = getWeeksInMonth(currentYear, currentMonth);
     
-    // Initialize weekly data
-    weeksInMonth.forEach(week => {
-      weeklyMap[`Week ${week.weekNum}`] = 0;
-    });
+    // Initialize weekly data with 5 weeks max
+    for (let i = 1; i <= 5; i++) {
+      weeklyMap[`Week ${i}`] = 0;
+    }
 
+    // Assign transactions to weeks
     monthlyTransactions.forEach(t => {
       const date = new Date(t.date);
       const weekNum = getWeekOfMonth(date);
-      const weekKey = `Week ${weekNum}`;
+      // Cap at week 5 if needed
+      const adjustedWeekNum = Math.min(weekNum, 5);
+      const weekKey = `Week ${adjustedWeekNum}`;
       weeklyMap[weekKey] = (weeklyMap[weekKey] || 0) + t.amount;
     });
 
@@ -134,30 +137,20 @@ function Dashboard() {
     setMonthlyData(monthlyChartData);
   };
 
-  // Helper function to get week of month
+  // Improved week of month calculation
   const getWeekOfMonth = (date) => {
-    const firstDay = new Date(date.getFullYear(), date.getMonth(), 1).getDay();
-    return Math.ceil((date.getDate() + firstDay) / 7);
+    const firstDayOfMonth = new Date(date.getFullYear(), date.getMonth(), 1);
+    const dayOfMonth = date.getDate();
+    
+    // Adjust for the first week starting on the 1st regardless of day
+    return Math.ceil((dayOfMonth + firstDayOfMonth.getDay()) / 7);
   };
 
-  // Helper function to get weeks in month
+  // Simplified weeks in month calculation
   const getWeeksInMonth = (year, month) => {
-    const weeks = [];
-    const firstDate = new Date(year, month, 1);
-    const lastDate = new Date(year, month + 1, 0);
-    
-    let weekNum = 1;
-    for (let d = new Date(firstDate); d <= lastDate; d.setDate(d.getDate() + 1)) {
-      if (d.getDay() === 0 || d.getDate() === 1) {
-        weeks.push({
-          weekNum,
-          startDate: new Date(d),
-          endDate: new Date(d.getFullYear(), d.getMonth(), Math.min(d.getDate() + 6, lastDate.getDate()))
-        });
-        weekNum++;
-      }
-    }
-    return weeks;
+    const firstDay = new Date(year, month, 1).getDay();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    return Math.ceil((daysInMonth + firstDay) / 7);
   };
 
   const generateInsights = async () => {
