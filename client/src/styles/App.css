@@ -1,16 +1,18 @@
 /* Base Styles */
 :root {
-  --primary-color: #4361ee;
-  --secondary-color: #3f37c9;
-  --background-color: #170f2d;
-  --text-color: #2b2d42;
-  --light-text: #f8f9fa;
-  --card-bg: #ffffff;
-  --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --primary-color: #667eea;
+  --secondary-color: #764ba2;
+  --background-color: #ffffff;
+  --text-color: #2d3748;
+  --light-text: #4a5568;
+  --card-bg: rgba(255, 255, 255, 0.8);
+  --glass-bg: rgba(255, 255, 255, 0.25);
+  --shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+  --border: 1px solid rgba(255, 255, 255, 0.18);
 }
 
 * {
-  box-sizing: border-box; /* Ensures padding doesn't affect width calculations */
+  box-sizing: border-box;
 }
 
 body {
@@ -20,12 +22,13 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: var(--background-color);
+  background: linear-gradient(135deg, #a9b9ff 0%, #fadffb 100%);
+  background-attachment: fixed;
   color: var(--text-color);
   height: 100vh;
   display: flex;
   flex-direction: column;
-  overflow-x: hidden; /* Prevents horizontal scrolling */
+  overflow-x: hidden;
 }
 
 /* Full-screen layout */
@@ -34,7 +37,7 @@ body {
   flex-direction: column;
   min-height: 100vh;
   width: 100%;
-  max-width: 100vw; /* Ensures it never exceeds viewport width */
+  max-width: 100vw;
   overflow: hidden;
 }
 
@@ -46,7 +49,7 @@ body {
   width: 100%;
   max-width: 1400px;
   margin: 0 auto;
-  overflow-x: hidden; /* Prevents horizontal scrolling */
+  overflow-x: hidden;
 }
 
 /* Loading state */
@@ -57,7 +60,10 @@ body {
   height: 100vh;
   width: 100%;
   font-size: 1.5rem;
-  background-color: var(--background-color);
+  color: var(--primary-color);
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
 }
 
 /* Dashboard Grid Layout */
@@ -71,15 +77,24 @@ body {
 
 /* Cards */
 .card {
-  background: var(--card-bg);
-  border-radius: 12px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 20px;
+  border: var(--border);
   box-shadow: var(--shadow);
   padding: 1.5rem;
   min-height: 300px;
   display: flex;
   flex-direction: column;
-  width: 100%; /* Ensures cards don't overflow */
-  overflow: hidden; /* Contains content within card */
+  width: 100%;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 40px rgba(31, 38, 135, 0.5);
 }
 
 /* Full-width elements */
@@ -108,20 +123,21 @@ body {
 /* Scrollbar styling */
 ::-webkit-scrollbar {
   width: 8px;
-  height: 8px; /* For horizontal scrollbars if needed elsewhere */
+  height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--background-color);
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--primary-color);
-  border-radius: 4px;
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--secondary-color);
+  background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
 }
 
 /* Markdown content styling */
@@ -129,17 +145,20 @@ body {
   width: 100%;
   max-width: 100%;
   overflow-y: auto;
-  overflow-x: hidden; /* Prevents horizontal scrolling */
+  overflow-x: hidden;
   padding: 1rem;
-  background: var(--card-bg);
-  border-radius: 8px;
-  word-wrap: break-word; /* Ensures long words don't cause overflow */
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 16px;
+  border: var(--border);
+  word-wrap: break-word;
 }
 
 .markdown-content h1 {
   color: var(--primary-color);
   margin-top: 0;
-  word-break: break-word; /* Prevents long headings from overflowing */
+  word-break: break-word;
 }
 
 .markdown-content ul {
@@ -157,6 +176,6 @@ img, svg, video, iframe {
 }
 
 pre, code {
-  white-space: pre-wrap; /* Ensures code doesn't cause horizontal scroll */
+  white-space: pre-wrap;
   word-break: break-word;
 }
