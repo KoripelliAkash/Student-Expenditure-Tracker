@@ -2,146 +2,217 @@
   max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
+  background: rgba(15, 15, 25, 0.7);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-radius: 16px;
+  border: 1px solid rgba(100, 100, 255, 0.2);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.3),
+    inset 0 0 12px rgba(255, 255, 255, 0.05);
+  color: white;
 }
 
 .transaction-form {
-  background: white;
-  border-radius: 8px;
-  padding: 20px;
+  background: rgba(20, 20, 30, 0.6);
+  border-radius: 12px;
+  padding: 25px;
   margin-bottom: 30px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  border: 1px solid rgba(100, 255, 255, 0.2);
+  box-shadow: 
+    0 4px 20px rgba(100, 255, 255, 0.1),
+    inset 0 0 10px rgba(100, 255, 255, 0.05);
 }
 
 .transaction-form h2 {
   margin-top: 0;
-  color: #333;
+  color: white;
+  text-shadow: 0 0 8px rgba(100, 255, 255, 0.3);
 }
 
 .form-group {
-  margin-bottom: 15px;
+  margin-bottom: 20px;
 }
 
 .form-group label {
   display: block;
-  margin-bottom: 5px;
+  margin-bottom: 8px;
   font-weight: 500;
+  color: rgba(255, 255, 255, 0.9);
 }
 
 .form-group input,
 .form-group select {
   width: 100%;
-  padding: 8px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+  padding: 12px;
+  background: rgba(30, 30, 45, 0.8);
+  border: 1px solid rgba(100, 255, 255, 0.3);
+  border-radius: 6px;
   font-size: 1rem;
+  color: white;
+  transition: all 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: rgba(100, 255, 255, 0.6);
+  box-shadow: 0 0 10px rgba(100, 255, 255, 0.2);
 }
 
 .submit-btn {
-  background: #4CAF50;
+  background: transparent;
   color: white;
-  border: none;
-  padding: 10px 15px;
-  border-radius: 4px;
+  border: 1px solid rgba(100, 255, 100, 0.4);
+  padding: 12px 24px;
+  border-radius: 6px;
   cursor: pointer;
   font-size: 1rem;
+  transition: all 0.3s ease;
+  text-shadow: 0 0 6px rgba(100, 255, 100, 0.3);
 }
 
 .submit-btn:hover {
-  background: #45a049;
+  background: rgba(100, 255, 100, 0.1);
+  box-shadow: 0 0 12px rgba(100, 255, 100, 0.3);
 }
 
 .submit-btn:disabled {
-  background: #cccccc;
+  background: transparent;
+  border-color: rgba(255, 255, 255, 0.2);
+  color: rgba(255, 255, 255, 0.4);
+  text-shadow: none;
   cursor: not-allowed;
 }
 
 .ocr-section {
-  margin-top: 10px;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .ocr-btn {
-  background: #2196F3;
+  background: transparent;
   color: white;
-  border: none;
-  padding: 8px 12px;
-  border-radius: 4px;
+  border: 1px solid rgba(100, 100, 255, 0.4);
+  padding: 10px 16px;
+  border-radius: 6px;
   cursor: pointer;
   font-size: 0.9rem;
-  margin-bottom: 10px;
+  margin-bottom: 15px;
+  transition: all 0.3s ease;
 }
 
 .ocr-btn:hover {
-  background: #0b7dda;
+  background: rgba(100, 100, 255, 0.1);
+  box-shadow: 0 0 10px rgba(100, 100, 255, 0.2);
 }
 
 .ocr-progress {
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin-bottom: 10px;
+  gap: 15px;
+  margin-bottom: 15px;
 }
 
 .ocr-progress progress {
   flex-grow: 1;
+  height: 6px;
+  border-radius: 3px;
+  background: rgba(30, 30, 45, 0.8);
+}
+
+.ocr-progress progress::-webkit-progress-bar {
+  background: rgba(30, 30, 45, 0.8);
+  border-radius: 3px;
+}
+
+.ocr-progress progress::-webkit-progress-value {
+  background: linear-gradient(90deg, rgba(100, 100, 255, 0.8), rgba(100, 255, 255, 0.8));
+  border-radius: 3px;
 }
 
 .ocr-result {
-  background: #f8f9fa;
-  padding: 10px;
-  border-radius: 4px;
-  margin-top: 10px;
+  background: rgba(20, 20, 30, 0.8);
+  padding: 15px;
+  border-radius: 8px;
+  margin-top: 15px;
+  border: 1px solid rgba(100, 255, 255, 0.2);
 }
 
 .ocr-result h4 {
   margin-top: 0;
-  margin-bottom: 5px;
+  margin-bottom: 10px;
+  color: white;
+  text-shadow: 0 0 6px rgba(100, 255, 255, 0.3);
 }
 
 .transactions-list {
-  background: white;
-  border-radius: 8px;
-  padding: 20px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  background: rgba(20, 20, 30, 0.6);
+  border-radius: 12px;
+  padding: 25px;
+  border: 1px solid rgba(255, 100, 255, 0.2);
+  box-shadow: 
+    0 4px 20px rgba(255, 100, 255, 0.1),
+    inset 0 0 10px rgba(255, 100, 255, 0.05);
 }
 
 .transactions-list h2 {
   margin-top: 0;
-  color: #333;
+  color: white;
+  text-shadow: 0 0 8px rgba(255, 100, 255, 0.3);
 }
 
 table {
   width: 100%;
   border-collapse: collapse;
+  margin-top: 20px;
 }
 
 th, td {
-  padding: 12px 15px;
+  padding: 14px 16px;
   text-align: left;
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  color: white;
 }
 
 th {
-  background-color: #f2f2f2;
+  background-color: rgba(100, 100, 255, 0.1);
   font-weight: bold;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  letter-spacing: 1px;
 }
 
 .delete-btn {
-  background: #f44336;
-  color: white;
-  border: none;
-  padding: 5px 10px;
+  background: transparent;
+  color: #ff6b6b;
+  border: 1px solid rgba(255, 100, 100, 0.4);
+  padding: 6px 12px;
   border-radius: 4px;
   cursor: pointer;
   font-size: 0.9rem;
+  transition: all 0.3s ease;
 }
 
 .delete-btn:hover {
-  background: #d32f2f;
+  background: rgba(255, 100, 100, 0.1);
+  box-shadow: 0 0 8px rgba(255, 100, 100, 0.2);
 }
 
 @media (max-width: 768px) {
   table {
     display: block;
     overflow-x: auto;
+  }
+  
+  .transaction-form,
+  .transactions-list {
+    padding: 20px;
+  }
+  
+  .form-group input,
+  .form-group select {
+    padding: 10px;
   }
 }

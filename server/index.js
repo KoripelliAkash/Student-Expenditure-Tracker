@@ -123,47 +123,64 @@ app.post('/api/generate-insights', authenticateJWT, async (req, res) => {
       .slice(0, 3);
 
     // Create comprehensive prompt with markdown formatting instructions
-    const prompt = `Analyze this student's expenses for ${month} ${year}:
+    const prompt = `You are an expert financial advisor and behavioral analyst.
 
-SPENDING SUMMARY:
-• Total Spent: ${totalAmount.toFixed(2)}
-• Number of Transactions: ${transactions.length}
-• Top Categories: ${topCategories.map(([cat, amt]) => `${cat} (${amt.toFixed(2)})`).join(', ')}
+Analyze the student's **monthly expenses** for **${month} ${year}** and generate a **deeply insightful, structured, and surprising** report. Go beyond the obvious—deduce **hidden patterns**, **psychological spending habits**, **possible lifestyle indicators**, and **potential financial risks** that may not be explicitly stated. 
 
-TRANSACTION DETAILS:
+---
+
+## 🧾 RAW DATA
+
+### 🔹 Spending Summary
+• **Total Spent**: \`${totalAmount.toFixed(2)}\`  
+• **Number of Transactions**: \`${transactions.length}\`  
+• **Top Categories**: ${topCategories.map(([cat, amt]) => `\`${cat}\` (\$${amt.toFixed(2)})`).join(', ')}
+
+### 🔹 Transaction Log
 ${transactions.map(t => 
-  `• ${t.date}: ${t.category || t.category_name} - ${t.amount} (${t.description || 'No description'})`
+  `• \`${t.date}\`: **${t.category || t.category_name}** - \$${t.amount.toFixed(2)} *(“${t.description || 'No description'}”)*`
 ).join('\n')}
 
-Please provide a concise analysis (150-200 words maximum) in MARKDOWN format covering:
-1. Top 3 spending categories with percentages
-2. Weekly spending pattern observations
-3. 2-3 specific money-saving opportunities 
-4. One actionable budgeting recommendation
+---
 
-IMPORTANT: Format your response using proper markdown syntax:
-- Use ## for main headings
-- Use ### for subheadings
-- Use - or * for bullet points
-- Use **bold** for emphasis
-- Use \`code\` for amounts
-- Use emojis to make it engaging
+## 🎯 ANALYSIS REQUEST (Return in **Markdown format**)
 
-Example format:
+Give a **comprehensive report** (within **200 words** max) in this **strict format**:
+
+---
+
 ## 📊 Expense Analysis for ${month} ${year}
 
-### 💰 Top Spending Categories
-- **Category Name**: \$XX.XX (XX%)
-- **Category Name**: \$XX.XX (XX%)
+### 💰 Top Spending Categories (with % of total)
+- **Category Name**: \`$XX.XX\` (XX%)
+- ...
 
-### 📈 Spending Patterns
-- Weekly observation...
+### 📈 Weekly Spending Patterns
+- Brief but clear weekly trend insights (e.g., "Mid-week spikes indicate spontaneous purchases")
+
+### 🕵️ Hidden Insights (Surprise me!)
+- **Behavioral inference**, **habit clues**, **lifestyle indicators**, or **financial red flags** from patterns
+- What might the student not even realize?
 
 ### 💡 Money-Saving Opportunities
-- Specific recommendation...
+- At least 2 **concrete**, personalized suggestions to reduce costs
 
-### 🎯 Budget Recommendation
-- Actionable advice...`;
+### 🎯 Budget Strategy
+- One **actionable**, clear budgeting tip or challenge to try next month
+
+---
+
+📝 **Formatting Rules**:
+- Use \`##\` and \`###\` headings properly  
+- Use \`- / *\` for bullet points  
+- Use \`code blocks\` for amounts  
+- Use **bold** for key terms  
+- Include **emojis** to make it engaging  
+- Keep the tone practical but slightly playful
+
+---
+`;
+
 
     console.log('Sending request to Gemini API...');
     const result = await model.generateContent(prompt);
@@ -304,5 +321,5 @@ app.use((error, req, res, next) => {
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
   console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
-  console.log(`Using Gemini model: gemini-1.5-flash`);
+  console.log(`Using Gemini model: gemini-2.5-flash`);
 });

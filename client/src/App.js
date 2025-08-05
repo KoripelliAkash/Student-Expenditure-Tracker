@@ -7,6 +7,7 @@ import Dashboard from './pages/Dashboard';
 import Transactions from './pages/Transactions';
 import Reports from './pages/Reports';
 import Navbar from './components/Navbar';
+import DownloadReport from './pages/DownloadReport';
 import './styles/App.css';
 
 function App() {

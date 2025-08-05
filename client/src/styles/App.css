@@ -1,3 +1,18 @@
+/* Base Styles */
+:root {
+  --primary-color: #4361ee;
+  --secondary-color: #3f37c9;
+  --background-color: #170f2d;
+  --text-color: #2b2d42;
+  --light-text: #f8f9fa;
+  --card-bg: #ffffff;
+  --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+* {
+  box-sizing: border-box; /* Ensures padding doesn't affect width calculations */
+}
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
@@ -5,23 +20,143 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: var(--background-color);
+  color: var(--text-color);
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden; /* Prevents horizontal scrolling */
 }
 
+/* Full-screen layout */
 .app {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  width: 100%;
+  max-width: 100vw; /* Ensures it never exceeds viewport width */
+  overflow: hidden;
 }
 
+/* Main content area */
 .main-content {
   flex: 1;
-  padding: 20px;
+  padding: 2rem;
+  overflow-y: auto;
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  overflow-x: hidden; /* Prevents horizontal scrolling */
 }
 
+/* Loading state */
 .loading {
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
-  font-size: 1.2rem;
+  width: 100%;
+  font-size: 1.5rem;
+  background-color: var(--background-color);
+}
+
+/* Dashboard Grid Layout */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+  width: 100%;
+  max-width: 100%;
+}
+
+/* Cards */
+.card {
+  background: var(--card-bg);
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  padding: 1.5rem;
+  min-height: 300px;
+  display: flex;
+  flex-direction: column;
+  width: 100%; /* Ensures cards don't overflow */
+  overflow: hidden; /* Contains content within card */
+}
+
+/* Full-width elements */
+.full-width {
+  grid-column: 1 / -1;
+  width: 100%;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .main-content {
+    padding: 1rem;
+  }
+  
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .card {
+    min-height: auto;
+    padding: 1rem;
+  }
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px; /* For horizontal scrollbars if needed elsewhere */
+}
+
+::-webkit-scrollbar-track {
+  background: var(--background-color);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--primary-color);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--secondary-color);
+}
+
+/* Markdown content styling */
+.markdown-content {
+  width: 100%;
+  max-width: 100%;
+  overflow-y: auto;
+  overflow-x: hidden; /* Prevents horizontal scrolling */
+  padding: 1rem;
+  background: var(--card-bg);
+  border-radius: 8px;
+  word-wrap: break-word; /* Ensures long words don't cause overflow */
+}
+
+.markdown-content h1 {
+  color: var(--primary-color);
+  margin-top: 0;
+  word-break: break-word; /* Prevents long headings from overflowing */
+}
+
+.markdown-content ul {
+  padding-left: 1.5rem;
+}
+
+.markdown-content li {
+  margin-bottom: 0.5rem;
+}
+
+/* Additional fixes for common overflow causes */
+img, svg, video, iframe {
+  max-width: 100%;
+  height: auto;
+}
+
+pre, code {
+  white-space: pre-wrap; /* Ensures code doesn't cause horizontal scroll */
+  word-break: break-word;
 }

@@ -3,6 +3,22 @@ import { supabase } from '../supabaseClient';
 import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import '../styles/Reports.css';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import { Link } from "react-router-dom";
+
+const tableStyles = `
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th, td {
+      border: 1px solid black;
+      padding: 8px;
+      text-align: left;
+    }
+  `;
+
 
 function Reports() {
   const [transactions, setTransactions] = useState([]);
@@ -34,7 +50,7 @@ function Reports() {
       // Create date range for the selected month/year
       const startDate = new Date(selectedYear, selectedMonth - 1, 1).toISOString();
       const endDate = new Date(selectedYear, selectedMonth, 0).toISOString();
-      
+
       const { data, error } = await supabase
         .from('transactions')
         .select(`
@@ -69,7 +85,7 @@ function Reports() {
         const date = new Date(transaction.date);
         const weekNum = getWeekOfMonth(date);
         const weekKey = `Week ${weekNum}`;
-        
+
         if (!weeklyTransactions[weekKey]) {
           weeklyTransactions[weekKey] = [];
         }
@@ -86,103 +102,61 @@ function Reports() {
   };
 
   const generateSummary = async () => {
-  try {
-    setError(null);
-    setSummary("Generating insights with Gemma AI...");
+    try {
+      setError(null);
+      setSummary("Generating insights with Gemma AI...");
 
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session) throw new Error("Please sign in");
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) throw new Error("Please sign in");
 
-    // Prepare optimized payload
-    const payload = {
-      transactions: transactions.map(t => ({
-        amount: t.amount,
-        category: t.category_name,
-        date: t.date,
-        description: t.description?.substring(0, 50) || ''
-      })),
-      month: new Date(selectedYear, selectedMonth - 1).toLocaleString('default', { month: 'long' }),
-      year: selectedYear
-    };
+      // Prepare optimized payload
+      const payload = {
+        transactions: transactions.map(t => ({
+          amount: t.amount,
+          category: t.category_name,
+          date: t.date,
+          description: t.description?.substring(0, 50) || ''
+        })),
+        month: new Date(selectedYear, selectedMonth - 1).toLocaleString('default', { month: 'long' }),
+        year: selectedYear
+      };
 
-    const response = await fetch('http://localhost:5000/api/generate-insights', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${session.access_token}`
-      },
-      body: JSON.stringify(payload)
-    });
+      const response = await fetch('http://localhost:5000/api/generate-insights', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session.access_token}`
+        },
+        body: JSON.stringify(payload)
+      });
 
-    const data = await response.json();
+      const data = await response.json();
 
-    if (!response.ok) {
-      throw new Error(data.error || data.fallback || "Analysis failed");
+      if (!response.ok) {
+        throw new Error(data.error || data.fallback || "Analysis failed");
+      }
+
+      setSummary(data.insights || data.fallback);
+
+    } catch (error) {
+      setError(error.message);
+      setSummary("");
+      console.error("Analysis Error:", error);
     }
-
-    setSummary(data.insights || data.fallback);
-
-  } catch (error) {
-    setError(error.message);
-    setSummary("");
-    console.error("Analysis Error:", error);
-  }
-};
+  };
 
   const generatePDF = () => {
     try {
-      const doc = new jsPDF();
-      const monthName = new Date(selectedYear, selectedMonth - 1).toLocaleString('default', { month: 'long' });
-      
-      // Title
-      doc.setFontSize(20);
-      doc.text(`Expense Report - ${monthName} ${selectedYear}`, 105, 15, { align: 'center' });
-      
-      let startY = 25;
-      
-      // Summary
-      if (summary) {
-        doc.setFontSize(12);
-        doc.text('AI-Generated Summary:', 14, startY);
-        doc.setFontSize(10);
-        const splitSummary = doc.splitTextToSize(summary, 180);
-        doc.text(splitSummary, 14, startY + 5);
-        startY = doc.lastAutoTable?.finalY || startY + 5 + splitSummary.length * 5;
-      }
-      
-      // Transactions by week
-      Object.entries(transactionsByWeek).forEach(([week, weekTransactions]) => {
-        doc.setFontSize(12);
-        doc.text(`${week}:`, 14, startY + 10);
-        
-        autoTable(doc, {
-          startY: startY + 15,
-          head: [['Date', 'Category', 'Description', 'Amount']],
-          body: weekTransactions.map(t => [
-            new Date(t.date).toLocaleDateString(),
-            t.category_name,
-            t.description || '-',
-            `$${t.amount.toFixed(2)}`
-          ]),
-          styles: { fontSize: 8 },
-          headStyles: { fillColor: [44, 62, 80] }
-        });
-        
-        // Weekly total
-        const weekTotal = weekTransactions.reduce((sum, t) => sum + t.amount, 0);
-        doc.setFontSize(10);
-        doc.text(`Weekly Total: $${weekTotal.toFixed(2)}`, 14, doc.lastAutoTable.finalY + 5);
-        
-        startY = doc.lastAutoTable.finalY + 10;
-      });
-      
-      // Monthly total
-      const total = transactions.reduce((sum, t) => sum + t.amount, 0);
-      doc.setFontSize(12);
-      doc.text(`Monthly Total: $${total.toFixed(2)}`, 14, startY + 10);
-      
-      // Save the PDF
-      doc.save(`expense-report-${selectedMonth}-${selectedYear}.pdf`);
+      let elementContents = document.getElementById("pdf-dl").innerHTML;
+      let printWindow = window.open('', '', 'height=800,width=1000');
+      // printWindow.document.write(`<html><head><style> body { font-family: Arial, sans-serif; } </style></head> <body> ${elementContents} </body></html>`); // .write Deprecated
+      let htmlContent = (`<html><head><style> body { font-family: Arial, sans-serif; } </style></head> <body> ${elementContents} </body></html>`);
+      printWindow.document.body.innerHTML = htmlContent;
+      printWindow.document.close();
+      printWindow.print();
+      printWindow.close();
+
+
     } catch (error) {
       console.error('Error generating PDF:', error);
       setError('Failed to generate PDF');
@@ -202,9 +176,9 @@ function Reports() {
   return (
     <div className="reports-container">
       <h1>Expense Reports</h1>
-      
+
       {error && <div className="error-message">{error}</div>}
-      
+
       <div className="report-controls">
         <div className="date-selectors">
           <select value={selectedMonth} onChange={handleMonthChange}>
@@ -214,7 +188,7 @@ function Reports() {
               </option>
             ))}
           </select>
-          
+
           <select value={selectedYear} onChange={handleYearChange}>
             {Array.from({ length: 5 }, (_, i) => {
               const year = new Date().getFullYear() - i;
@@ -222,51 +196,63 @@ function Reports() {
             })}
           </select>
         </div>
-        
+
         <button onClick={generateSummary} className="generate-btn">
           Generate AI Summary
         </button>
       </div>
-      
-      {summary && (
-        <div className="summary-section">
-          <h2>AI Summary for {new Date(selectedYear, selectedMonth - 1).toLocaleString('default', { month: 'long', year: 'numeric' })}</h2>
-          <p>{summary}</p>
-        </div>
-      )}
-      
-      <div className="weekly-transactions">
-        {Object.entries(transactionsByWeek).map(([week, weekTransactions]) => (
-          <div key={week} className="week-section">
-            <h3>{week}</h3>
-            <table className="transactions-table">
-              <thead>
-                <tr>
-                  <th>Date</th>
-                  <th>Category</th>
-                  <th>Description</th>
-                  <th>Amount</th>
-                </tr>
-              </thead>
-              <tbody>
-                {weekTransactions.map(tx => (
-                  <tr key={tx.id}>
-                    <td>{new Date(tx.date).toLocaleDateString()}</td>
-                    <td>{tx.category_name}</td>
-                    <td>{tx.description || '-'}</td>
-                    <td>${tx.amount.toFixed(2)}</td>
-                  </tr>
-                ))}
-                <tr className="week-total">
-                  <td colSpan="3">Weekly Total:</td>
-                  <td>${weekTransactions.reduce((sum, t) => sum + t.amount, 0).toFixed(2)}</td>
-                </tr>
-              </tbody>
-            </table>
+      <div id='pdf-dl'>
+        {summary && (
+          <div className="summary-section">
+            <h2>AI Summary for {new Date(selectedYear, selectedMonth - 1).toLocaleString('default', { month: 'long', year: 'numeric' })}</h2>
+            <div>
+              <style>{tableStyles}</style>
+              <ReactMarkdown
+                remarkPlugins={[remarkGfm]}
+                children={summary}
+                components={{
+                  table: ({ node, ...props }) => (
+                    <table style={{ border: '1px solid black' }} {...props} />
+                  )
+                }}
+              />
+            </div>
           </div>
-        ))}
+        )}
+
+        <div className="weekly-transactions">
+          {Object.entries(transactionsByWeek).map(([week, weekTransactions]) => (
+            <div key={week} className="week-section">
+              <h3>{week}</h3>
+              <table className="transactions-table">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Category</th>
+                    <th>Description</th>
+                    <th>Amount</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {weekTransactions.map(tx => (
+                    <tr key={tx.id}>
+                      <td>{new Date(tx.date).toLocaleDateString()}</td>
+                      <td>{tx.category_name}</td>
+                      <td>{tx.description || '-'}</td>
+                      <td>${tx.amount.toFixed(2)}</td>
+                    </tr>
+                  ))}
+                  <tr className="week-total">
+                    <td colSpan="3">Weekly Total:</td>
+                    <td>${weekTransactions.reduce((sum, t) => sum + t.amount, 0).toFixed(2)}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          ))}
+        </div>
       </div>
-      
+
       <div className="report-actions">
         {transactions.length > 0 ? (
           <button onClick={generatePDF} className="download-btn">

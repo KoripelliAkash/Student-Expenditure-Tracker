@@ -2,30 +2,63 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 15px 20px;
-  background: #2c3e50;
+  padding: 15px 30px;
+  background: rgba(15, 15, 25, 0.8); /* Semi-transparent black */
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(100, 100, 255, 0.2); /* Neon blue border */
+  box-shadow: 
+    0 2px 20px rgba(100, 100, 255, 0.1),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.05);
   color: white;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
 }
 
 .navbar-brand a {
   color: white;
   text-decoration: none;
-  font-size: 1.2rem;
+  font-size: 1.3rem;
   font-weight: bold;
+  text-shadow: 0 0 8px rgba(100, 100, 255, 0.5); /* Neon glow */
+  transition: all 0.3s ease;
+}
+
+.navbar-brand a:hover {
+  text-shadow: 0 0 12px rgba(100, 100, 255, 0.8);
 }
 
 .navbar-links {
   display: flex;
-  gap: 20px;
+  gap: 25px;
 }
 
 .navbar-links a {
   color: white;
   text-decoration: none;
+  padding: 5px 0;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.navbar-links a::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(100, 255, 255, 0.8), transparent);
+  transition: width 0.3s ease;
+}
+
+.navbar-links a:hover::after {
+  width: 100%;
 }
 
 .navbar-links a:hover {
-  text-decoration: underline;
+  text-shadow: 0 0 6px rgba(100, 255, 255, 0.6); /* Cyan glow */
 }
 
 .logout-btn {
@@ -33,9 +66,26 @@
   border: none;
   color: white;
   cursor: pointer;
-  padding: 0;
+  padding: 5px 0;
+  font-family: inherit;
+  position: relative;
+}
+
+.logout-btn::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(255, 100, 100, 0.8), transparent);
+  transition: width 0.3s ease;
+}
+
+.logout-btn:hover::after {
+  width: 100%;
 }
 
 .logout-btn:hover {
-  text-decoration: underline;
+  text-shadow: 0 0 6px rgba(255, 100, 100, 0.6); /* Red glow */
 }
