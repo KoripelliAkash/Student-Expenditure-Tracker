@@ -3,7 +3,7 @@
   --primary-color: #667eea;
   --secondary-color: #764ba2;
   --background-color: #ffffff;
-  --text-color: #2d3748;
+  --text-color: #3E3F29;
   --light-text: #4a5568;
   --card-bg: rgba(255, 255, 255, 0.8);
   --glass-bg: rgba(255, 255, 255, 0.25);
@@ -22,7 +22,8 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background: linear-gradient(135deg, #a9b9ff 0%, #fadffb 100%);
+  /* background: linear-gradient(135deg, #a9b9ff 0%, #fadffb 100%); */
+  background: linear-gradient(135deg, #F1F0E4 0%, #3E3F29 100%);
   background-attachment: fixed;
   color: var(--text-color);
   height: 100vh;

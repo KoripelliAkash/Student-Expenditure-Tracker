@@ -65,7 +65,7 @@
 button {
   width: 100%;
   padding: 12px 20px;
-  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  background: linear-gradient(135deg, #3E3F29, #7D8D86);
   border: none;
   border-radius: 12px;
   color: white;

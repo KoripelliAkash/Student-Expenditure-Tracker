@@ -6,22 +6,22 @@
   background: rgba(255, 255, 255, 0.25);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.18);
+  border-bottom: 1px solid #BCA88D;
   box-shadow: 
     0 8px 32px rgba(31, 38, 135, 0.37),
     inset 0 1px 0 rgba(255, 255, 255, 0.3);
-  color: var(--text-color);
+  color: #3E3F29;
   position: sticky;
   top: 0;
   z-index: 1000;
 }
 
 .navbar-brand a {
-  color: var(--text-color);
+  color: #3E3F29;
   text-decoration: none;
   font-size: 1.5rem;
   font-weight: 700;
-  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  background: linear-gradient(135deg, #3E3F29, #BCA88D);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;

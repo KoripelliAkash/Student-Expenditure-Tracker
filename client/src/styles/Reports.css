@@ -78,8 +78,9 @@
 }
 
 .generate-btn {
-  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  background: linear-gradient(135deg, #3E3F29,#BCA88D);
   color: white;
+  width : auto;
   border: none;
   padding: 12px 24px;
   border-radius: 12px;
@@ -140,7 +141,7 @@
 
 .week-section h3 {
   margin-top: 0;
-  color: var(--text-color);
+  color: #3E3F29;
   font-weight: 600;
   font-size: 1.4rem;
 }
@@ -161,7 +162,7 @@
   padding: 15px;
   text-align: left;
   border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-  color: var(--text-color);
+  color: #3E3F29;
 }
 
 .transactions-table th {
@@ -191,6 +192,7 @@
 .download-btn {
   background: linear-gradient(135deg, #48bb78, #38a169);
   color: white;
+  width: auto;
   border: none;
   padding: 12px 30px;
   border-radius: 12px;
