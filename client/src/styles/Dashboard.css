@@ -1,5 +1,5 @@
 .dashboard-container {
-  max-width: 1200px;
+  max-width: 1600px;
   margin: 0 auto;
   padding: 30px;
   background: rgba(255, 255, 255, 0.25);
@@ -38,6 +38,150 @@
   color: 7D8D86;
   text-align: center;
   margin: 10px 0;
+}
+
+/* Dashboard Budget Card Styles */
+.summary-cards {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 30px;
+  flex-wrap: wrap;
+}
+
+.summary-card {
+  flex: 1;
+  min-width: 250px;
+}
+
+.budget-card {
+  background: linear-gradient(135deg, #3E3F29, #BCA88D);
+  color: white;
+}
+
+.budget-card h2 {
+  color: white;
+  margin-bottom: 15px;
+}
+
+.budget-overview {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.budget-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+}
+
+.budget-label {
+  font-size: 0.95em;
+  opacity: 0.9;
+}
+
+.budget-value {
+  font-size: 1.1em;
+  font-weight: bold;
+}
+
+.budget-value.over-budget {
+  color: #ffcccb;
+}
+
+.budget-value.under-budget {
+  color: #90ee90;
+}
+
+.budget-progress-container {
+  margin-top: 10px;
+}
+
+.budget-progress-bar {
+  height: 8px;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 5px;
+}
+
+.budget-progress-fill {
+  height: 100%;
+  transition: width 0.3s ease;
+}
+
+.budget-progress-fill.normal {
+  background: #90ee90;
+}
+
+.budget-progress-fill.warning {
+  background: #ffd700;
+}
+
+.budget-progress-fill.over-budget {
+  background: #ff6b6b;
+}
+
+.budget-progress-text {
+  font-size: 0.85em;
+  opacity: 0.9;
+}
+
+.insights-content {
+  margin-top: 15px;
+}
+
+.insights-text {
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 6px;
+  padding: 15px;
+}
+
+.insights-text p {
+  margin-bottom: 10px;
+  line-height: 1.5;
+  color: #333;
+}
+
+.insights-text p:last-child {
+  margin-bottom: 0;
+}
+
+.generate-btn:disabled {
+  background: #6c757d;
+  cursor: not-allowed;
+}
+
+.generate-btn:disabled:hover {
+  background: #6c757d;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .budget-stats {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .stat-item {
+    min-width: 100%;
+  }
+  
+  .summary-cards {
+    flex-direction: column;
+  }
+  
+  .budget-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+  }
+  
+  .form-actions {
+    flex-direction: column;
+  }
 }
 
 /* Charts */

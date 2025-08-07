@@ -7,6 +7,11 @@ function Transactions() {
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [categories, setCategories] = useState([]);
+  const [currentBudget, setCurrentBudget] = useState(null);
+  const [budgetInput, setBudgetInput] = useState('');
+  const [showBudgetForm, setShowBudgetForm] = useState(false);
+  const [monthlySpent, setMonthlySpent] = useState(0);
+  const [remainingBudget, setRemainingBudget] = useState(0);
   const [formData, setFormData] = useState({
     amount: '',
     category_id: '',
@@ -22,47 +27,52 @@ function Transactions() {
   useEffect(() => {
     fetchTransactions();
     fetchCategories();
+    fetchCurrentBudget();
   }, []);
 
+  useEffect(() => {
+    calculateMonthlySpending();
+  }, [transactions, currentBudget]);
+
   const fetchTransactions = async () => {
-  setLoading(true);
-  try {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) throw new Error('User not authenticated');
+    setLoading(true);
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('User not authenticated');
 
-    const { data, error } = await supabase
-      .from('transactions')
-      .select(`
-        id,
-        amount,
-        date,
-        description,
-        receipt_url,
-        category_id,
-        categories!inner(
-          name
-        )
-      `)
-      .eq('user_id', user.id)
-      .order('date', { ascending: false });
+      const { data, error } = await supabase
+        .from('transactions')
+        .select(`
+          id,
+          amount,
+          date,
+          description,
+          receipt_url,
+          category_id,
+          categories!inner(
+            name
+          )
+        `)
+        .eq('user_id', user.id)
+        .order('date', { ascending: false });
 
-    if (error) throw error;
-    
-    // Format the data to include category_name
-    const formattedData = data.map(transaction => ({
-      ...transaction,
-      category_name: transaction.categories.name
-    }));
-    
-    setTransactions(formattedData);
-    setError(null);
-  } catch (error) {
-    console.error('Error fetching transactions:', error.message);
-    setError(error.message);
-  } finally {
-    setLoading(false);
-  }
-};
+      if (error) throw error;
+      
+      // Format the data to include category_name
+      const formattedData = data.map(transaction => ({
+        ...transaction,
+        category_name: transaction.categories.name
+      }));
+      
+      setTransactions(formattedData);
+      setError(null);
+    } catch (error) {
+      console.error('Error fetching transactions:', error.message);
+      setError(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const fetchCategories = async () => {
     try {
@@ -74,6 +84,95 @@ function Transactions() {
       setCategories(data);
     } catch (error) {
       console.error('Error fetching categories:', error.message);
+      setError(error.message);
+    }
+  };
+
+  const fetchCurrentBudget = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('User not authenticated');
+
+      const now = new Date();
+      const currentMonth = now.getMonth() + 1; // getMonth() returns 0-11
+      const currentYear = now.getFullYear();
+
+      const { data, error } = await supabase
+        .from('budgets')
+        .select('*')
+        .eq('user_id', user.id)
+        .eq('month', currentMonth)
+        .eq('year', currentYear)
+        .single();
+
+      if (error && error.code !== 'PGRST116') { // PGRST116 is "not found"
+        throw error;
+      }
+
+      setCurrentBudget(data);
+    } catch (error) {
+      console.error('Error fetching budget:', error.message);
+    }
+  };
+
+  const calculateMonthlySpending = () => {
+    const now = new Date();
+    const currentMonth = now.getMonth();
+    const currentYear = now.getFullYear();
+
+    const monthlyTransactions = transactions.filter(t => {
+      const transactionDate = new Date(t.date);
+      return transactionDate.getMonth() === currentMonth && 
+             transactionDate.getFullYear() === currentYear;
+    });
+
+    const totalSpent = monthlyTransactions.reduce((sum, t) => sum + parseFloat(t.amount), 0);
+    setMonthlySpent(totalSpent);
+
+    if (currentBudget) {
+      const remaining = parseFloat(currentBudget.amount) - totalSpent;
+      setRemainingBudget(remaining);
+    } else {
+      setRemainingBudget(0);
+    }
+  };
+
+  const handleBudgetSubmit = async (e) => {
+    e.preventDefault();
+    if (!budgetInput || isNaN(budgetInput) || parseFloat(budgetInput) <= 0) {
+      setError('Please enter a valid budget amount');
+      return;
+    }
+
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('User not authenticated');
+
+      const now = new Date();
+      const currentMonth = now.getMonth() + 1;
+      const currentYear = now.getFullYear();
+
+      const { data, error } = await supabase
+        .from('budgets')
+        .upsert({
+          user_id: user.id,
+          amount: parseFloat(budgetInput),
+          month: currentMonth,
+          year: currentYear
+        }, {
+          onConflict: 'user_id,month,year'
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      setCurrentBudget(data);
+      setBudgetInput('');
+      setShowBudgetForm(false);
+      setError(null);
+    } catch (error) {
+      console.error('Error setting budget:', error.message);
       setError(error.message);
     }
   };
@@ -155,9 +254,26 @@ function Transactions() {
           const fileExt = formData.receipt.name.split('.').pop();
           const fileName = `${user.id}/${Date.now()}.${fileExt}`;
           
+          // First, make sure the receipts bucket exists
+          const { data: buckets } = await supabase.storage.listBuckets();
+          const receiptsBucket = buckets.find(bucket => bucket.name === 'receipts');
+          
+          if (!receiptsBucket) {
+            // Create the bucket if it doesn't exist
+            const { error: bucketError } = await supabase.storage.createBucket('receipts', {
+              public: true,
+              allowedMimeTypes: ['image/*'],
+              fileSizeLimit: 1024 * 1024 * 10 // 10MB
+            });
+            if (bucketError) throw bucketError;
+          }
+
           const { error: uploadError } = await supabase.storage
             .from('receipts')
-            .upload(fileName, formData.receipt);
+            .upload(fileName, formData.receipt, {
+              cacheControl: '3600',
+              upsert: false
+            });
           
           if (uploadError) throw uploadError;
           
@@ -168,6 +284,7 @@ function Transactions() {
           receiptUrl = publicUrl;
         } catch (uploadError) {
           console.error('Receipt upload failed:', uploadError);
+          setError(`Receipt upload failed: ${uploadError.message}. Transaction will be saved without receipt.`);
           // Continue without receipt if upload fails
         }
       }
@@ -189,7 +306,7 @@ function Transactions() {
       
       console.log('Transaction added:', data);
 
-      // 4. Reset form and refresh
+      // 4. Reset form and refresh data
       setFormData({
         amount: '',
         category_id: '',
@@ -198,9 +315,18 @@ function Transactions() {
         receipt: null
       });
       setOcrText('');
-      await fetchTransactions();
-
       
+      // Force refresh of all data
+      await Promise.all([
+        fetchTransactions(),
+        fetchCurrentBudget()
+      ]);
+
+      // Clear file input
+      const fileInput = document.querySelector('input[type="file"]');
+      if (fileInput) {
+        fileInput.value = '';
+      }
 
     } catch (error) {
       console.error('Transaction error:', error);
@@ -220,7 +346,12 @@ function Transactions() {
         .eq('id', id);
       
       if (error) throw error;
-      fetchTransactions();
+      
+      // Refresh all data after deletion
+      await Promise.all([
+        fetchTransactions(),
+        fetchCurrentBudget()
+      ]);
     } catch (error) {
       console.error('Error deleting transaction:', error.message);
       setError(error.message);
@@ -234,6 +365,101 @@ function Transactions() {
       <h1>Manage Transactions</h1>
       
       {error && <div className="error-message">{error}</div>}
+      
+      {/* Budget Section */}
+      <div className="budget-section">
+        <h2>Monthly Budget</h2>
+        {currentBudget ? (
+          <div className="budget-info">
+            <div className="budget-stats">
+              <div className="stat-item">
+                <span className="stat-label">Budget:</span>
+                <span className="stat-value">${parseFloat(currentBudget.amount).toFixed(2)}</span>
+              </div>
+              <div className="stat-item">
+                <span className="stat-label">Spent:</span>
+                <span className="stat-value">${monthlySpent.toFixed(2)}</span>
+              </div>
+              <div className="stat-item">
+                <span className="stat-label">Remaining:</span>
+                <span className={`stat-value ${remainingBudget < 0 ? 'over-budget' : 'under-budget'}`}>
+                  ${remainingBudget.toFixed(2)}
+                </span>
+              </div>
+            </div>
+            <div className="budget-progress">
+              <div className="progress-bar">
+                <div 
+                  className={`progress-fill ${monthlySpent > parseFloat(currentBudget.amount) ? 'over-budget' : ''}`}
+                  style={{ width: `${Math.min((monthlySpent / parseFloat(currentBudget.amount)) * 100, 100)}%` }}
+                ></div>
+              </div>
+              <span className="progress-text">
+                {((monthlySpent / parseFloat(currentBudget.amount)) * 100).toFixed(1)}% used
+                {monthlySpent > parseFloat(currentBudget.amount) && 
+                  ` (${(((monthlySpent / parseFloat(currentBudget.amount)) - 1) * 100).toFixed(1)}% over)`
+                }
+              </span>
+            </div>
+            <div className="budget-actions">
+              <button onClick={() => setShowBudgetForm(true)} className="update-budget-btn">
+                Update Budget
+              </button>
+              <button 
+                onClick={() => {
+                  fetchTransactions();
+                  fetchCurrentBudget();
+                }}
+                className="refresh-budget-btn"
+                style={{
+                  background: 'linear-gradient(135deg, #3E3F29, #BCA88D)',
+                  color: 'white',
+                  border: 'none',
+                  width: 'auto',
+                  padding: '8px 16px',
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                  fontSize: '0.9em',
+                  marginLeft: '10px'
+                }}
+              >
+                Refresh
+              </button>
+            </div>
+          </div>
+        ) : (
+          <div className="no-budget">
+            <p>No budget set for this month</p>
+            <button onClick={() => setShowBudgetForm(true)} className="set-budget-btn">
+              Set Budget
+            </button>
+          </div>
+        )}
+        
+        {showBudgetForm && (
+          <div className="budget-form">
+            <form onSubmit={handleBudgetSubmit}>
+              <div className="form-group">
+                <label>Monthly Budget ($)</label>
+                <input
+                  type="number"
+                  step="0.01"
+                  value={budgetInput}
+                  onChange={(e) => setBudgetInput(e.target.value)}
+                  placeholder="Enter budget amount"
+                  required
+                />
+              </div>
+              <div className="form-actions">
+                <button type="submit" className="save-budget-btn">Save Budget</button>
+                <button type="button" onClick={() => setShowBudgetForm(false)} className="cancel-btn">
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+        )}
+      </div>
       
       <div className="transaction-form">
         <h2>Add New Transaction</h2>
@@ -343,8 +569,8 @@ function Transactions() {
             <tbody>
               {transactions.map(tx => (
                 <tr key={tx.id}>
-                <td>{new Date(tx.date).toLocaleDateString()}</td>
-                <td>{tx.category_name}</td>
+                  <td>{new Date(tx.date).toLocaleDateString()}</td>
+                  <td>{tx.category_name}</td>
                   <td>{tx.description || '-'}</td>
                   <td>${tx.amount.toFixed(2)}</td>
                   <td>
