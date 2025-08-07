@@ -104,7 +104,7 @@ function Reports() {
   const generateSummary = async () => {
     try {
       setError(null);
-      setSummary("Generating insights with Gemma AI...");
+      setSummary("Generating insights with AI...");
 
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) throw new Error("Please sign in");
