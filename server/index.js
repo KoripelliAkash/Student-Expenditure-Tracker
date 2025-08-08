@@ -12,12 +12,12 @@ app.use(cors());
 app.use(express.json());
 
 // Supabase setup
-const supabaseUrl = process.env.NEXT_PUBLIC_REACT_APP_SUPABASE_URL;
-const supabaseKey = process.env.NEXT_PUBLIC_REACT_APP_SUPABASE_SERVICE_KEY;
+const supabaseUrl = process.env.SUPABASE_URL;
+const supabaseKey = process.env.SUPABASE_SERVICE_KEY;
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 // Gemini AI setup
-const genAI = new GoogleGenerativeAI(process.env.NEXT_PUBLIC_REACT_APP_GEMINI_API_KEY);
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 // Middleware to verify JWT
 const authenticateJWT = async (req, res, next) => {
