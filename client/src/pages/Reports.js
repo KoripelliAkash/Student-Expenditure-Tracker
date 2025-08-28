@@ -121,14 +121,18 @@ function Reports() {
         year: selectedYear
       };
 
-      const response = await fetch('/api/generate-insights', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${session.access_token}`
-        },
-        body: JSON.stringify(payload)
-      });
+      const apiUrl = process.env.NODE_ENV === 'production' 
+      ? `${process.env.REACT_APP_API_URL}/api/generate-insights`
+      : 'http://localhost:5000/api/generate-insights';
+
+    const response = await fetch(apiUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${session.access_token}`
+      },
+      body: JSON.stringify(payload)
+    });
 
       const data = await response.json();
 

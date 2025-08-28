@@ -8,7 +8,18 @@ const { GoogleGenerativeAI } = require('@google/generative-ai');
 const app = express();
 const port = process.env.PORT || 5000;
 
-app.use(cors());
+// app.use(cors());
+
+// CORS configuration (commented out the restrictive one)
+app.use(cors({
+  origin: process.env.NODE_ENV === 'production' 
+    ? process.env.FRONTEND_URL 
+    : ['http://localhost:3000', 'http://127.0.0.1:3000'],
+  methods: ['POST', 'GET', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true
+}));
+
 app.use(express.json());
 
 // Supabase setup
@@ -290,15 +301,7 @@ This helps build better financial habits and ensures you're saving for the futur
 *⚠️ Note: This is a basic analysis. AI-powered insights will be available when the service is restored.*`;
 }
 
-// CORS configuration (commented out the restrictive one)
-app.use(cors({
-  origin: process.env.NODE_ENV === 'production' 
-    ? process.env.FRONTEND_URL 
-    : ['http://localhost:3000', 'http://127.0.0.1:3000'],
-  methods: ['POST', 'GET', 'PUT', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: true
-}));
+
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
