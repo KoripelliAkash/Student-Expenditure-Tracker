@@ -63,7 +63,7 @@ const MyDocument = ({ transactions, month, year, summary }) => {
   const monthName = new Date(year, month - 1).toLocaleString('default', { month: 'long' });
   const total = transactions.reduce((sum, t) => sum + t.amount, 0);
 
-  // Group by category for the pie chart (simplified for PDF)
+  // Group by category for the pie chart 
   const categoryData = {};
   transactions.forEach(t => {
     const category = t.categories.category_name;
