@@ -29,7 +29,7 @@ body {
   height: 100vh;
   display: flex;
   flex-direction: column;
-  overflow-x: hidden;
+  /* overflow-x: hidden; */
 }
 
 /* Full-screen layout */
@@ -39,18 +39,18 @@ body {
   min-height: 100vh;
   width: 100%;
   max-width: 100vw;
-  overflow: hidden;
+  /* overflow: hidden; */
 }
 
 /* Main content area */
 .main-content {
   flex: 1;
-  padding: 2rem;
+  padding: 1rem;
   overflow-y: auto;
   width: 100%;
-  max-width: 1400px;
+  /* max-width: 1400px; */
   margin: 0 auto;
-  overflow-x: hidden;
+  /* overflow-x: hidden; */
 }
 
 /* Loading state */

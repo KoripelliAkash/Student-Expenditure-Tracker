@@ -1,0 +1,222 @@
+.features-overlay{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    padding: 0;
+    margin: 0px;
+}
+
+.image-container {
+  position: relative;
+  width: 100%;
+  height: 800px;
+  
+}
+
+.background-image {
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+  border-radius: 2%;
+}
+
+.get-started-btn{
+    width: auto;
+}
+
+.overlay {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  color: white;
+  background: rgba(44, 37, 37, 0.4); 
+  backdrop-filter: blur(2px);           
+  -webkit-backdrop-filter: blur(10px);   
+  width: 100%;
+  height: 100%;
+  padding: 40px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+}
+
+.title {
+  font-size: 3rem;
+  font-weight: bold;
+  margin-bottom: 0.5px;
+}
+
+.subtitle {
+  margin-top: 0px;
+  font-size: 1.5rem;
+  margin-top: 10px;
+}
+
+
+
+.features-container {
+  margin-top: 20px;
+  width: 100%;
+  padding: 30px;
+  background: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: 
+    0 8px 32px rgba(31, 38, 135, 0.37),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.features-header {
+  text-align: center;
+  margin-bottom: 50px;
+}
+
+.features-header h1 {
+  font-size: 2.5rem;
+  color: var(--text-color);
+  margin-bottom: 15px;
+  font-weight: 600;
+}
+
+.features-header p {
+  font-size: 1.2rem;
+  color: var(--light-text);
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 30px;
+  padding: 20px;
+}
+
+.feature-card {
+  background: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  border-radius: 20px;
+  padding: 25px;
+  text-align: center;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 
+    0 8px 32px rgba(31, 38, 135, 0.37),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.feature-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 40px rgba(31, 38, 135, 0.5);
+}
+
+.feature-icon {
+  font-size: 3rem;
+  margin-bottom: 20px;
+}
+
+.feature-card h2 {
+  color: var(--text-color);
+  font-size: 1.5rem;
+  margin-bottom: 15px;
+  font-weight: 600;
+}
+
+.feature-card p {
+  color: var(--light-text);
+  line-height: 1.6;
+}
+
+.feature {
+  margin-top: 20px; 
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 60px 10%;
+  height: 400px;
+  background: #f9f9f9;
+  gap: 60px;
+  background: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  border-radius: 20px;
+}
+
+.feature-left {
+  justify-content: left;
+}
+
+.feature-img {
+  max-width: 100%;
+  height: 300px;
+  object-fit: cover;
+  border-radius: 20px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+}
+
+.feature-right {
+  flex: 1;
+  color: #333;
+  justify-content: left;
+}
+
+.feature-title {
+  font-size: 2.2rem;
+  font-weight: bold;
+  margin-bottom: 15px;
+}
+
+.feature-text {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  margin-bottom: 25px;
+}
+
+.feature-btn {
+  padding: 12px 30px;
+  font-size: 1rem;
+  font-weight: bold;
+  width: auto;
+  border: none;
+  border-radius: 30px;
+  background: linear-gradient(135deg, #4e54c8, #8f94fb);
+  color: #fff;
+  cursor: pointer;
+  transition: transform 0.2s ease, background 0.3s ease;
+}
+
+.feature-btn:hover {
+  transform: scale(1.05);
+  background: linear-gradient(135deg, #3b41c5, #6f74f9);
+}
+
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .features-container {
+    margin: 20px;
+    padding: 20px;
+  }
+
+  .features-header h1 {
+    font-size: 2rem;
+  }
+
+  .features-header p {
+    font-size: 1rem;
+  }
+
+  .features-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+    padding: 10px;
+  }
+}

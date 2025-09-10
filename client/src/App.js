@@ -6,6 +6,7 @@ import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import Transactions from './pages/Transactions';
 import Reports from './pages/Reports';
+import Features from './pages/Features';
 import Navbar from './components/Navbar';
 import DownloadReport from './pages/DownloadReport';
 import './styles/App.css';
@@ -23,7 +24,8 @@ function App() {
               <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
               <Route path="/transactions" element={<ProtectedRoute><Transactions /></ProtectedRoute>} />
               <Route path="/reports" element={<ProtectedRoute><Reports /></ProtectedRoute>} />
-              <Route path="/" element={<Navigate to="/dashboard" />} />
+              <Route path="/features" element={<Features />} />
+              <Route path="/" element={<Navigate to="/features" />} />
             </Routes>
           </div>
         </div>

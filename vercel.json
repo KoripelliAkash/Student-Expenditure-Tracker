@@ -4,7 +4,10 @@
     {
       "src": "client/package.json",
       "use": "@vercel/static-build",
-      "config": { "distDir": "build" }
+      "config": {
+        "distDir": "build",
+        "buildCommand": "npm run build"
+      }
     },
     {
       "src": "server/index.js",
@@ -17,8 +20,44 @@
       "dest": "server/index.js"
     },
     {
+      "src": "^/static/(.*)",
+      "dest": "/client/build/static/$1"
+    },
+    {
+      "src": "^/favicon.ico",
+      "dest": "/client/build/favicon.ico"
+    },
+    {
+      "src": "^/manifest.json",
+      "dest": "/client/build/manifest.json"
+    },
+    {
+      "src": "^/(.*).(js|css|json|png|jpg|svg|gif)$",
+      "dest": "/client/build/$1.$2"
+    },
+    {
       "src": "/(.*)",
-      "dest": "/index.html"
+      "dest": "/client/build/index.html"
     }
-  ]
+  ],
+  "env": {
+    "NODE_ENV": "production",
+    "REACT_APP_SUPABASE_URL": "https://oznxzeyvclcfxitdnglq.supabase.co",
+    "REACT_APP_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im96bnh6ZXl2Y2xjZnhpdGRuZ2xxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQxMDgwNjIsImV4cCI6MjA2OTY4NDA2Mn0.sLApVusiAL5w7dxRlKHRCsH_ag9uDPO-a27RykgnS3U",
+    "SUPABASE_URL": "https://oznxzeyvclcfxitdnglq.supabase.co",
+    "SUPABASE_SERVICE_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im96bnh6ZXl2Y2xjZnhpdGRuZ2xxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQxMDgwNjIsImV4cCI6MjA2OTY4NDA2Mn0.sLApVusiAL5w7dxRlKHRCsH_ag9uDPO-a27RykgnS3U",
+    "GEMINI_API_KEY": "AIzaSyD33gtbsjhC7DkI-X7zW1vI6m702PLYKjM",
+    "PORT": "5000"
+  },
+  "build": {
+    "env": {
+      "NODE_ENV": "production"
+    }
+  },
+  "functions": {
+    "server/index.js": {
+      "memory": 1024,
+      "maxDuration": 10
+    }
+  }
 }
