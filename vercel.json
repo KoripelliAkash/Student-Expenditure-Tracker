@@ -22,14 +22,11 @@
   "routes": [
     {
       "src": "/api/(.*)",
-      "dest": "server/index.js"
+      "dest": "/server/index.js"
     },
     {
-      "handle": "filesystem"
-    },
-    {
-      "src": "/.*",
-      "dest": "client/build/index.html"
+      "src": "/(.*)",
+      "dest": "/client/build/index.html"
     }
   ],
   "env": {
